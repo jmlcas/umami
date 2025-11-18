@@ -4,23 +4,19 @@ services:
     image: ghcr.io/umami-software/umami:postgresql-latest
     ports:
       - "8200:3000"
+    env_file: .env      
     environment:
-      DATABASE_URL: postgresql://umami:umami@db:5432/umami
-      DATABASE_TYPE: postgresql
-      HASH_SALT: replace-me-with-a-random-string
+      TRACKER_SCRIPT_NAME: getinfo
+      API_COLLECT_ENDPOINT: all
+      APP_SECRET: replace-me-with-a-random-string
     depends_on:
       - db
     restart: unless-stopped
 
   db:
     image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: umami_db
-      POSTGRES_USER: umami_user
-      POSTGRES_PASSWORD: umami_pass
+    env_file: .env    
     volumes:
-      - ./sql/schema.postgresql.sql:/docker-entrypoint-initdb.d/schema.postgresql.sql:ro
-      - ./umami-db-data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     restart: unless-stopped
-
-
+    
